@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e3b43">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AquaManejo">
+<title>AquaManejo — Ferramentas para Piscicultura</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="offline" hidden>Modo offline — as calculadoras continuam funcionando</div>
+<header><a href="#home" id="brand">AquaManejo</a></header>
+<main id="view" tabindex="-1"></main>
+<nav id="tabs" aria-label="Módulos"></nav>
+<!-- Dados técnicos (separados da lógica). Ordem importa. -->
+<script src="data/especies.js"></script>
+<script src="data/racao.js"></script>
+<script src="data/agua.js"></script>
+<script src="data/doencas.js"></script>
+<script src="data/biblioteca.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
