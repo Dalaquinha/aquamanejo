@@ -1,4 +1,4 @@
-/* AquaManejo — lógica (fórmulas) separada dos dados técnicos (pasta data/).
+/* AquaManejo — lógica (fórmulas) separada dos dados técnicos (arquivos dados-*.js).
    Sem dependências. Registros ficam só no aparelho (localStorage). */
 'use strict';
 const $ = s => document.querySelector(s);
@@ -42,13 +42,14 @@ const MODS = [
   { id:'biomassa', ic:'📊', nome:'Biomassa' }, { id:'custos', ic:'💰', nome:'Custos' },
   { id:'crescimento', ic:'📈', nome:'Crescimento' }, { id:'biblioteca', ic:'📚', nome:'Biblioteca' }
 ];
+const VERSAO = 'v5';
 const VIEWS = {};
 // Cada tela registra o que deve rodar depois de desenhada; o route() executa logo após inserir o HTML.
 let PENDING = null; const later = fn => { PENDING = fn; };
 
-VIEWS.home = () => `<h1>AquaManejo</h1><p class="sub">Ferramentas para Piscicultura</p>
+VIEWS.home = () => `${avisoDados()}<h1>AquaManejo</h1><p class="sub">Ferramentas para Piscicultura</p>
   <div class="grid">${MODS.map((m,i)=>`<a class="tile${i==6?' wide':''}" href="#${m.id}"><span>${m.ic}</span>${m.nome.toUpperCase()}</a>`).join('')}</div>
-  <div class="aviso">Gratuito, sem cadastro e sem anúncios. Seus registros ficam só neste aparelho. Funciona sem internet.</div>`;
+  <div class="aviso">Gratuito, sem cadastro e sem anúncios. Seus registros ficam só neste aparelho. Funciona sem internet.</div><p class="sub" style="text-align:center">Versão ${VERSAO}</p>`;
 
 VIEWS.racao = () => { later(() => {
   $('#calc').onclick = () => {
@@ -79,7 +80,7 @@ VIEWS.racao = () => { later(() => {
     out(`<div class="card">${h}</div>` + (fonte ? `<div class="aviso">Fonte: ${fonte}. A tabela é referência: ajuste observando sobras de ração e o comportamento dos peixes. Confira a biomassa com biometria (mín. 40 a 50 peixes).</div>` : '') + AVISO);
   };
 }); return `<h1>🐟 Ração</h1>
-  <div class="aviso"><b>Tilápia:</b> usa a Tabela 10 da Epagri (2019). <b>Pacu, tambaqui e carpa:</b> sem tabela cadastrada (<span class="validar">DADO TÉCNICO A VALIDAR</span>) — digite a taxa do seu técnico ou preencha <code>data/racao.js</code>.</div>
+  <div class="aviso"><b>Tilápia:</b> usa a Tabela 10 da Epagri (2019). <b>Pacu, tambaqui e carpa:</b> sem tabela cadastrada (<span class="validar">DADO TÉCNICO A VALIDAR</span>) — digite a taxa do seu técnico ou preencha <code>dados-racao.js</code>.</div>
   <label for="esp">Espécie</label><select id="esp">${ESPECIES.map(e=>`<option value="${e.id}">${e.nome}</option>`).join('')}</select>
   ${field('qtd','Quantidade de peixes')}${field('peso','Peso médio individual (g)')}${field('temp','Temperatura da água (°C)')}${field('tratos','Número de tratos por dia',{ph:'tilápia: usa a tabela'})}
   <label for="tipo">Tipo de ração</label><select id="tipo">${RACAO.tiposRacao.map(t=>`<option>${t}</option>`).join('')}</select>
@@ -158,9 +159,17 @@ VIEWS.biblioteca = () => { later(() => { const q = $('#bq2'); const draw = () =>
   $('#bl').innerHTML = l.map(a => `<details><summary>${a.titulo} <small>(${a.tema})</small></summary><p>${a.texto.replace('DADO TÉCNICO A VALIDAR',VAL)}</p><p class="sub">Fonte: ${a.fonte}</p></details>`).join('') || '<p>Nada encontrado.</p>'; }; q.oninput = draw; draw(); });
   return `<h1>📚 Biblioteca</h1>${field('bq2','Buscar',{type:'search',ph:'ex.: aclimatação'})}<div id="bl"></div>`; };
 
+/* ---------- DIAGNÓSTICO: avisa na tela se algum arquivo de dados não carregou ---------- */
+const DADOS = { 'dados-especies.js':'ESPECIES', 'dados-racao.js':'RACAO', 'dados-agua.js':'AGUA', 'dados-doencas.js':'DOENCAS', 'dados-biblioteca.js':'BIBLIOTECA' };
+const faltando = () => Object.entries(DADOS).filter(([f, n]) => (0, eval)('typeof ' + n) === 'undefined').map(([f]) => f);
+const avisoDados = () => { const f = faltando(); return f.length ? `<div class="aviso" style="border-color:#b23a26"><b>Arquivos que não carregaram:</b><ul>${f.map(x=>`<li>${x}</li>`).join('')}</ul>Confira no GitHub se esses arquivos estão na raiz do repositório (junto do index.html) e atualize a página.</div>` : ''; };
+
 /* ---------- NAVEGAÇÃO, OFFLINE, SERVICE WORKER ---------- */
 function route() { const id = (location.hash || '#home').slice(1); const v = VIEWS[id] || VIEWS.home;
-  PENDING = null; const html = v(); $('#view').innerHTML = html; if (PENDING) { const p = PENDING; PENDING = null; p(); } window.scrollTo(0, 0);
+  PENDING = null;
+  try { const html = v(); $('#view').innerHTML = html; if (PENDING) { const p = PENDING; PENDING = null; p(); } }
+  catch (err) { const faltam = [['especies.js', typeof ESPECIES], ['racao.js', typeof RACAO], ['agua.js', typeof AGUA], ['doencas.js', typeof DOENCAS], ['biblioteca.js', typeof BIBLIOTECA]].filter(x => x[1] === 'undefined').map(x => 'dados-' + x[0]);
+    $('#view').innerHTML = `<h1>Esta tela não abriu</h1><div class="aviso"><b>Detalhe técnico:</b> ${String(err && err.message || err)}<br><b>Versão do app:</b> ${VERSAO}<br>${faltam.length ? '<b>Arquivos que não carregaram:</b> ' + faltam.join(', ') + '. Confira se foram enviados ao GitHub na pasta <code>data</code>.' : 'Todos os arquivos de dados carregaram.'}</div><a class="btn" href="#home" style="display:block;text-align:center;text-decoration:none;line-height:30px">Voltar ao início</a>`; } window.scrollTo(0, 0);
   $('#tabs').innerHTML = MODS.map(m => `<a href="#${m.id}" class="${m.id===id?'on':''}"><span>${m.ic}</span>${m.nome}</a>`).join(''); }
 addEventListener('hashchange', route);
 const net = () => $('#offline').hidden = navigator.onLine; addEventListener('online', net); addEventListener('offline', net);
