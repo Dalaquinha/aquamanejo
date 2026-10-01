@@ -1,6 +1,6 @@
 // Service worker: guarda todos os arquivos no aparelho (cache-first).
 // Ao alterar qualquer arquivo, aumente CACHE para forçar atualização.
-const CACHE = 'aquamanejo-v3';
+const CACHE = 'aquamanejo-v4';
 const ARQUIVOS = ['./','index.html','style.css','app.js','manifest.json','icon.svg','icon-180.png','icon-192.png','icon-512.png','icon-maskable-512.png',
   'data/especies.js','data/racao.js','data/agua.js','data/doencas.js','data/biblioteca.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS))); self.skipWaiting(); });
