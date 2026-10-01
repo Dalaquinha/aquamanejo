@@ -1,0 +1,29 @@
+FOTOS DAS DOENÇAS — como incluir
+
+Coloque aqui as fotos com EXATAMENTE estes nomes (formato .jpg, ideal ~800 px de largura, menos de 150 KB cada):
+
+  columnariose.jpg          septicemia-hemorragica.jpg   estreptococose.jpg
+  franciselose.jpg          saprolegniose.jpg            tricodinideos.jpg
+  gloquidio.jpg             ictiofitiriase.jpg           inchaco-abdominal.jpg
+  intoxicacao-nitrito.jpg   amonia-toxica.jpg            oxigenio-baixo.jpg
+
+Enquanto a foto não existir, o app mostra um cartão "Foto a incluir" (nada quebra).
+
+DIREITOS AUTORAIS: as fotos do livro da Epagri (2019) têm autores creditados e o livro não traz licença de reuso.
+Antes de publicar, peça autorização à Epagri ou use fotos próprias / de banco com licença livre.
+Figuras do livro com fotos de doenças: 33 (columnariose), 34 (septicemia), 35 (estreptococose), 36 (franciselose), 37 (saprolegniose),
+38 (tricodinídeos, microscópio), 39 (gloquídio), 40 (ictio); 25 (inchaço abdominal); 19 (sangue marrom por nitrito).
+
+DEPOIS DE ADICIONAR AS FOTOS: para elas funcionarem 100% offline, inclua os caminhos na lista ARQUIVOS do service-worker.js
+(ex.: 'img/doencas/columnariose.jpg') e aumente a versão do CACHE. Só inclua arquivos que existam: um arquivo faltando
+na lista impede o cache de todo o app. Sem isso, cada foto passa a funcionar offline depois da primeira vez que for aberta com internet.
+
+
+FONTES COM LICENÇA ABERTA (confira a licença na página de CADA arquivo antes de usar)
+- Ictiofitiríase (pontos brancos): Wikimedia Commons, arquivo "File:Ichthyophthiriasis.jpg" — a página declara domínio público.
+  Fotos da Freshwater Biological Association (environmentdata.org): licença CC BY-NC 3.0 (exige crédito; uso não comercial).
+- Estreptococose: artigos de acesso aberto com fotos de sinais clínicos em tilápia, licença CC BY (exige crédito ao autor), por exemplo
+  Oncotarget (artigo 23551) e BMC Veterinary Research 2024 (s12917-024-04298-z). Confira a licença da figura específica.
+- Demais doenças: pesquise em commons.wikimedia.org e em artigos de acesso aberto (CC BY). Evite licenças "NC" se o app puder ser usado comercialmente.
+COMO USAR: baixe a imagem, redimensione (~800 px), renomeie conforme a lista acima e coloque nesta pasta.
+Depois escreva na ficha, em data/doencas.js:  credito:'Nome do autor, fonte, licença'  (aparece abaixo da foto no app).
